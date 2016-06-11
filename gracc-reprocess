@@ -103,6 +103,7 @@ if __name__=="__main__":
         logging.basicConfig(level=logging.ERROR, format=logfmt)
     else:
         logging.basicConfig(level=logging.INFO, format=logfmt)
+    logging.addLevelName(99,'UBER')
 
     processor = Processor(args.index, args.url, args.size, args.close)
     processor.process()
