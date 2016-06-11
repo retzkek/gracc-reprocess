@@ -12,6 +12,7 @@ back through the GRACC collector.
 from argparse import ArgumentParser
 import logging
 import requests
+import traceback
 from elasticsearch import Elasticsearch, RequestsHttpConnection
 
 
@@ -32,6 +33,8 @@ class Processor(object):
                 logger.log(99,'Processing index %s'%idx)
                 self.process_index(idx)
             except:
+                logger.error('Exception while processing index %s'%idx)
+                traceback.print_exc()
                 continue
 
     def process_index(self,index):
