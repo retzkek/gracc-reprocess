@@ -50,10 +50,11 @@ class Processor(object):
 
 
 if __name__=="__main__":
-    parser = ArgumentParser(description='Reprocess GRACC records through collector')
+    parser = ArgumentParser(description='Reindex GRACC records')
     parser.add_argument('source',help='source index pattern (e.g. "gracc.osg.raw-*")')
     parser.add_argument('target',help='target index prefix (e.g. "gracc.osg.raw0")')
-    parser.add_argument('--size',help='Record batch size (default 500)',default=500)
+    parser.add_argument('--size',help='Record batch size (default 500)',default=500,type=int)
+    parser.add_argument('--timeout',help='Elasticsearch read timeout in seconds (default 60)',default=60,type=int)
     parser.add_argument('--close',help='Close index when done processing',action='store_true')
     parser.add_argument('--debug',help='Enable debug logging',action='store_true')
     parser.add_argument('--quiet',help='Disable most logging (ignored if --debug specified)',action='store_true')
@@ -69,5 +70,5 @@ if __name__=="__main__":
         logging.basicConfig(level=logging.INFO, format=logfmt)
     logging.addLevelName(99,'UBER')
 
-    processor = Processor(args.source, args.target, args.size, args.close)
+    processor = Processor(args.source, args.target, args.size, args.close, args.timeout)
     processor.process()
