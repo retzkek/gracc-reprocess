@@ -39,7 +39,7 @@ class Processor(object):
 
     def process_index(self,index):
         s = self.client.search(index=index, 
-                _source=["message"],
+                _source=["RawXML"],
                 scroll="5m",
                 size=self.size)
         all_hits = s['hits']['total']
@@ -67,7 +67,7 @@ class Processor(object):
     def make_bundle(self, r):
         b = ''
         for s in r:
-            b += 'replication|%s|%s||' % (s['_source']['message'],s['_source']['message'])
+            b += 'replication|%s|%s||' % (s['_source']['RawXML'],s['_source']['RawXML'])
         return b
 
     def send_records(self, r):
