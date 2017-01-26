@@ -73,7 +73,7 @@ class Processor(object):
                 self.client.indices.put_alias(index=new,name=alias)
                 try:
                     self.client.indices.delete_alias(index=index,name=alias)
-                except NotFoundError:
+                except elasicsearch.NotFoundError:
                     logger.warning('old alias does not exist to delete')
         if self.close:
             logger.log(99,'Closing index %s'%index)
