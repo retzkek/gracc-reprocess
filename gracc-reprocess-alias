@@ -16,9 +16,10 @@ import traceback
 import sys
 import re
 from elasticsearch import Elasticsearch, RequestsHttpConnection
-
+import progressbar
 
 logger = logging.getLogger(__name__)
+
 
 class Processor(object):
     def __init__(self, index, url, size=500, close=False, timeout=60, alias=False, alias_regex=None, new_ver=None):
@@ -50,9 +51,13 @@ class Processor(object):
                 size=self.size)
         all_hits = s['hits']['total']
         logger.log(99,'Processing %d recordss'%all_hits)
+        bar = progressbar.ProgressBar(max_value=all_hits,redirect_stdout=True)
+
         self.send_records(s['hits']['hits'])
         sent_hits = len(s['hits']['hits'])
         logger.info('sent %d/%d records'%(sent_hits,all_hits))
+        bar.update(sent_hits)
+
         while True:
             s = self.client.scroll(scroll_id=s['_scroll_id'],scroll="5m")
             if len(s['hits']['hits']) == 0:
@@ -60,6 +65,7 @@ class Processor(object):
             self.send_records(s['hits']['hits'])
             sent_hits += len(s['hits']['hits'])
             logger.info('sent %d/%d records'%(sent_hits,all_hits))
+            bar.update(sent_hits)
         logger.log(99,'Processing complete. Sent %d/%d records'%(sent_hits,all_hits))
         if self.alias:
             match=self.alias_regex.match(index)
